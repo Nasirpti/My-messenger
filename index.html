@@ -3,17 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VibeTalk Ultra - Nasir Messenger</title>
+    <title>VibeTalk Pro - Nasir Messenger</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #e5ddd5; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
         .header-card { background: white; width: 100%; max-width: 500px; padding: 15px 0; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); border-bottom: 3px solid #075e54; position: relative; }
         .profile-img { width: 80px; height: 80px; border-radius: 50%; border: 3px solid #075e54; object-fit: cover; }
-        .status-dot { width: 12px; height: 12px; background: #bbb; border-radius: 50%; display: inline-block; margin-right: 5px; }
-        .online { background: #4CAF50; }
         
+        /* کال اور نیویگیشن بٹنز */
         .nav-buttons { position: absolute; top: 10px; width: 100%; display: flex; justify-content: space-between; padding: 0 10px; box-sizing: border-box; }
-        .btn-ui { background: #075e54; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 10px; }
+        .call-tools { display: flex; gap: 8px; }
+        .btn-ui { background: #075e54; color: white; border: none; padding: 6px 10px; border-radius: 5px; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; }
+        .btn-danger { background: #cc0000 !important; }
 
         #chat-container { width: 100%; max-width: 500px; background: #e5ddd5; flex: 1; display: none; flex-direction: column; overflow: hidden; }
         #messages { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 8px; }
@@ -25,10 +26,10 @@
         .msg { padding: 10px; border-radius: 12px; font-size: 15px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
         .sent { background: #dcf8c6; border-bottom-right-radius: 0; }
         .received { background: white; border-bottom-left-radius: 0; }
-        .msg-info { font-size: 9px; color: #666; margin-top: 2px; display: flex; justify-content: space-between; }
+        .msg-info { font-size: 9px; color: #666; margin-top: 2px; display: flex; justify-content: space-between; align-items: center; }
 
-        /* ٹائپنگ اور ان پٹ */
-        #typing-box { padding: 5px 15px; font-size: 12px; color: #075e54; font-style: italic; height: 20px; }
+        /* ان پٹ ایریا */
+        #typing-box { padding: 2px 15px; font-size: 11px; color: #075e54; font-style: italic; height: 15px; }
         .input-area { background: #f0f0f0; padding: 10px; display: flex; gap: 8px; align-items: center; }
         #msg-input { flex: 1; border: none; padding: 12px; border-radius: 25px; outline: none; }
         .icon-btn { background: #075e54; color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-size: 16px; }
@@ -38,26 +39,29 @@
 
     <div class="header-card">
         <div class="nav-buttons">
-            <button class="btn-ui" onclick="exitChat()" style="background:#cc0000">باہر نکلیں</button>
-            <button class="btn-ui" onclick="window.open('https://meet.jit.si/'+roomCode, '_blank')"><i class="fas fa-video"></i> کال</button>
+            <button class="btn-ui btn-danger" onclick="exitChat()"><i class="fas fa-sign-out-alt"></i></button>
+            <div class="call-tools">
+                <button class="btn-ui" onclick="startCall('audio')" title="آڈیو کال"><i class="fas fa-phone-alt"></i></button>
+                <button class="btn-ui" onclick="startCall('video')" title="ویڈیو کال"><i class="fas fa-video"></i></button>
+            </div>
         </div>
-        <img src="flag.gif" alt="Flag" style="width:50px;"><br>
+        <img src="flag.gif" alt="Flag" style="width:45px;"><br>
         <img src="my-photo.jpg" alt="Nasir" class="profile-img">
         <h1 style="font-size:16px; margin:5px 0;">ناصر ممتاز</h1>
-        <div id="user-status"><span class="status-dot"></span> آف لائن</div>
+        <div id="user-status" style="font-size:11px; color:#666;">روم میں داخل ہوں...</div>
     </div>
 
     <div id="start-screen" style="text-align:center; padding:50px;">
-        <button onclick="initChat()" style="background:#075e54; color:white; padding:15px 30px; border-radius:30px; border:none; font-size:18px; cursor:pointer;">چیٹ میں داخل ہوں</button>
+        <button onclick="initChat()" style="background:#075e54; color:white; padding:15px 30px; border-radius:30px; border:none; font-size:18px; cursor:pointer; font-weight:bold;">چیٹ روم میں جائیں</button>
     </div>
 
     <div id="chat-container">
-        <div id="room-info" style="background:#075e54; color:white; padding:5px; text-align:center; font-size:12px;">روم کوڈ: <span id="current-room"></span></div>
+        <div id="room-info" style="background:#075e54; color:white; padding:4px; text-align:center; font-size:11px;">روم کوڈ: <span id="current-room"></span></div>
         <div id="messages"></div>
         <div id="typing-box"></div>
         <div class="input-area">
             <button id="mic-btn" class="icon-btn" onclick="toggleRecording()"><i class="fas fa-microphone"></i></button>
-            <input type="text" id="msg-input" placeholder="کچھ لکھیں..." oninput="sendTyping()">
+            <input type="text" id="msg-input" placeholder="پیغام لکھیں..." oninput="sendTyping()">
             <button class="icon-btn" onclick="sendMsg()"><i class="fas fa-paper-plane"></i></button>
         </div>
     </div>
@@ -91,40 +95,38 @@
       document.getElementById('start-screen').style.display = "none";
       document.getElementById('chat-container').style.display = "flex";
       document.getElementById('current-room').innerText = roomCode;
-      
-      // آن لائن اسٹیٹس
-      const statusRef = ref(db, 'status/' + userName);
-      set(statusRef, { state: 'online', last_changed: Date.now() });
-      onDisconnect(statusRef).set({ state: 'offline', last_changed: Date.now() });
-      document.getElementById('user-status').innerHTML = '<span class="status-dot online"></span> آن لائن';
+      document.getElementById('user-status').innerHTML = '<span style="color:#4CAF50">● آن لائن</span>';
 
       messagesRef = ref(db, 'rooms/' + roomCode + '/messages');
       typingRef = ref(db, 'rooms/' + roomCode + '/typing/' + userName);
 
-      // میسجز دکھانا
       onChildAdded(messagesRef, (data) => {
           const msg = data.val();
           const isMine = msg.sender === userName;
-          const content = msg.type === 'voice' ? `<audio controls src="${msg.audio}" style="width:200px;"></audio>` : msg.text;
+          const content = msg.type === 'voice' ? `<audio controls src="${msg.audio}" style="width:180px;"></audio>` : msg.text;
           const html = `<div class="msg-wrapper ${isMine ? 'sent-wrapper' : 'received-wrapper'}" id="msg-${data.key}">
               <div class="msg ${isMine ? 'sent' : 'received'}">${content}</div>
-              <div class="msg-info"><span>${msg.time}</span> <i class="fas fa-trash" onclick="deleteMsg('${data.key}')" style="cursor:pointer"></i></div>
+              <div class="msg-info"><span>${msg.time}</span> <i class="fas fa-trash" onclick="deleteMsg('${data.key}')" style="cursor:pointer; color:#bbb; margin-left:5px;"></i></div>
           </div>`;
           document.getElementById('messages').insertAdjacentHTML('beforeend', html);
           document.getElementById('messages').scrollTop = document.getElementById('messages').scrollHeight;
       });
 
-      // ٹائپنگ چیک کرنا
       onValue(ref(db, 'rooms/' + roomCode + '/typing'), (snapshot) => {
           const users = snapshot.val();
           let typingNow = "";
-          for (let user in users) {
-              if (user !== userName && users[user] === true) typingNow = user + " لکھ رہا ہے...";
-          }
+          for (let user in users) { if (user !== userName && users[user] === true) typingNow = user + " لکھ رہا ہے..."; }
           document.getElementById('typing-box').innerText = typingNow;
       });
 
       onChildRemoved(messagesRef, (data) => { document.getElementById("msg-" + data.key).remove(); });
+  }
+
+  window.startCall = function(type) {
+      if(!roomCode) return alert("پہلے روم میں داخل ہوں");
+      // Jitsi Meet پر کال شروع کرنا (config کے ذریعے ویڈیو بند کرنا اگر آڈیو کال ہو)
+      let callUrl = `https://meet.jit.si/${roomCode}#config.startWithVideoMuted=${type === 'audio'}`;
+      window.open(callUrl, '_blank');
   }
 
   window.sendMsg = function() {
@@ -138,7 +140,7 @@
 
   window.sendTyping = function() {
       set(typingRef, true);
-      setTimeout(() => set(typingRef, false), 3000);
+      setTimeout(() => set(typingRef, false), 2000);
   }
 
   window.toggleRecording = async function() {
@@ -167,4 +169,4 @@
 </script>
 </body>
     </html>
-    
+                
