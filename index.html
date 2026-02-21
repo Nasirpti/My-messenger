@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ur">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Nasir Messenger Pro 🇵🇰</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root { --main: #075e54; --light: #dcf8c6; }
+        body { margin: 0; font-family: sans-serif; background: #e5ddd5; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+        .hdr { background: var(--main); color: white; padding: 10px; text-align: center; font-weight: bold; position: sticky; top: 0; }
+        .p-img { width: 50px; height: 50px; border-radius: 50%; border: 2px solid white; margin-bottom: 5px; }
+        #box { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
+        .msg { padding: 10px; border-radius: 12px; max-width: 75%; font-size: 15px; background: white; align-self: flex-start; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+        .me { align-self: flex-end; background: var(--light); }
+        .ftr { background: #f0f0f0; padding: 10px; display: flex; align-items: center; gap: 8px; border-top: 1px solid #ddd; }
+        input { flex: 1; border: none; padding: 12px; border-radius: 25px; outline: none; font-size: 16px; }
+        .btn-m { background: var(--main); color: white; border: none; border-radius: 50%; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; }
+        .mic-on { color: red !important; animation: pulse 1s infinite; }
+        @keyframes pulse { 50% { opacity: 0.5; } }
+    </style>
+</head>
+<body>
+
+<div class="hdr">
+    <img src="https://chateme.github.io/my-photo.jpg" onerror="this.src='https://github.com/chateme.png'" class="p-img"><br>
+    ناصر ممتاز میسنجر 🇵🇰
+</div>
+
+<div id="box"></div>
+
+<div class="ftr">
+    <input type="text" id="inp" placeholder="پیغام لکھیں...">
+    <button style="background:none; border:none; color:#075e54; font-size:22px;" id="mic"><i class="fas fa-microphone"></i></button>
+    <button class="btn-m" id="snd"><i class="fas fa-paper-plane"></i></button>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getDatabase, ref, push, onChildAdded } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+    const cfg = { databaseURL: "https://message-me-bbd25-default-rtdb.firebaseio.com/" };
+    const app = initializeApp(cfg);
+    const db = getDatabase(app);
+    const mRef = ref(db, "nasir_chat_new");
+    let rec, chunks = [], myId = "User-" + Math.floor(Math.random() * 999);
+
+    const post = (v, t) => { if(v) push(mRef, { u: myId, v: v, t: t }); };
+
+    document.getElementById('snd').onclick = () => {
+        const i = document.getElementById('inp');
+        if(i.value.trim()) { post(i.value, 't'); i.value = ""; }
+    };
+
+    document.getElementById('mic').onclick = async function() {
+        const icon = this.querySelector('i');
+        if (!rec || rec.state === 'inactive') {
+            try {
+                const s = await navigator.mediaDevices.getUserMedia({ audio: true });
+                rec = new MediaRecorder(s); rec.start();
+                icon.classList.add('mic-on'); chunks = [];
+                rec.ondataavailable = e => chunks.push(e.data);
+                rec.onstop = () => {
+                    const r = new FileReader();
+                    r.readAsDataURL(new Blob(chunks, { type: 'audio/webm' }));
+                    r.onloadend = () => post(r.result, 'v');
+                    icon.classList.remove('mic-on');
+                };
+            } catch (e) { alert("براہ کرم مائیک کی اجازت دیں!"); }
+        } else rec.stop();
+    };
+
+    onChildAdded(mRef, (s) => {
+        const d = s.val();
+        const html = `<div class="msg ${d.u === myId ? 'me' : ''}">${d.t === 't' ? d.v : `<audio src="${d.v}" controls style="width:190px"></audio>`}</div>`;
+        const b = document.getElementById('box');
+        b.insertAdjacentHTML('beforeend', html);
+        b.scrollTop = b.scrollHeight;
+    });
+</script>
+</body>
+</html>
