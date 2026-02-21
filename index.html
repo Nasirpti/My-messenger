@@ -3,34 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ناصر ممتاز - VibeTalk</title>
+    <title>VibeTalk - Nasir Messenger</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; background: #e5ddd5; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #e5ddd5; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
         
-        /* پورٹ فولیو سیکشن */
-        .header-card { background: white; width: 100%; max-width: 500px; padding: 20px 0; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); border-bottom: 3px solid #075e54; }
-        .flag-img { width: 70px; margin-bottom: 10px; }
-        .profile-img { width: 120px; height: 120px; border-radius: 50%; border: 4px solid #075e54; object-fit: cover; }
-        h1 { margin: 10px 0 5px; color: #075e54; font-size: 22px; }
-        .social-icons { margin: 15px 0; }
-        .social-icons a { font-size: 25px; margin: 0 15px; color: #0081C9; text-decoration: none; }
+        /* ہیڈر اور پورٹ فولیو */
+        .header-card { background: white; width: 100%; max-width: 500px; padding: 15px 0; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); border-bottom: 3px solid #075e54; }
+        .flag-img { width: 60px; }
+        .profile-img { width: 100px; height: 100px; border-radius: 50%; border: 3px solid #075e54; object-fit: cover; margin: 5px 0; }
+        h1 { margin: 5px 0; color: #075e54; font-size: 20px; }
+        .social-icons a { font-size: 22px; margin: 0 10px; color: #0081C9; text-decoration: none; }
 
-        /* میسنجر سیکشن */
+        /* چیٹ کنٹینر */
         #chat-container { width: 100%; max-width: 500px; background: #e5ddd5; flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-        #room-info { background: #075e54; color: white; padding: 10px; text-align: center; font-size: 14px; font-weight: bold; }
-        #messages { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
+        #room-info { background: #075e54; color: white; padding: 8px; text-align: center; font-size: 13px; font-weight: bold; }
+        #messages { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 12px; }
         
-        /* میسج ببل اسٹائل */
-        .msg { max-width: 80%; padding: 8px 12px; border-radius: 10px; font-size: 15px; position: relative; box-shadow: 0 1px 1px rgba(0,0,0,0.1); word-wrap: break-word; }
-        .sent { align-self: flex-end; background: #dcf8c6; border-bottom-right-radius: 0; }
-        .received { align-self: flex-start; background: white; border-bottom-left-radius: 0; }
-        .sender-name { font-size: 11px; font-weight: bold; color: #075e54; display: block; margin-bottom: 2px; }
+        /* میسج ببل اور ڈیلیٹ بٹن */
+        .msg-wrapper { display: flex; flex-direction: column; position: relative; max-width: 85%; }
+        .sent-wrapper { align-self: flex-end; }
+        .received-wrapper { align-self: flex-start; }
+
+        .msg { padding: 8px 12px; border-radius: 12px; font-size: 15px; box-shadow: 0 1px 1px rgba(0,0,0,0.1); word-wrap: break-word; position: relative; }
+        .sent { background: #dcf8c6; border-bottom-right-radius: 0; }
+        .received { background: white; border-bottom-left-radius: 0; }
         
+        .sender-name { font-size: 11px; font-weight: bold; color: #075e54; margin-bottom: 2px; }
+        
+        /* ڈیلیٹ آئیکن */
+        .delete-btn { font-size: 12px; color: #999; cursor: pointer; margin-top: 4px; align-self: flex-end; transition: 0.3s; }
+        .delete-btn:hover { color: #cc0000; }
+
         /* ان پٹ ایریا */
-        .input-area { background: #f0f0f0; padding: 10px; display: flex; gap: 10px; align-items: center; }
-        #msg-input { flex: 1; border: none; padding: 12px; border-radius: 25px; outline: none; font-size: 16px; }
-        #send-btn { background: #075e54; color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; }
+        .input-area { background: #f0f0f0; padding: 10px; display: flex; gap: 8px; align-items: center; }
+        #msg-input { flex: 1; border: none; padding: 12px; border-radius: 25px; outline: none; }
+        #send-btn { background: #075e54; color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
     </style>
 </head>
 <body>
@@ -48,7 +56,7 @@
     </div>
 
     <div id="chat-container">
-        <div id="room-info">لوڈنگ...</div>
+        <div id="room-info">روم کوڈ لوڈ ہو رہا ہے...</div>
         <div id="messages"></div>
         <div class="input-area">
             <input type="text" id="msg-input" placeholder="پیغام لکھیں...">
@@ -58,7 +66,7 @@
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-  import { getDatabase, ref, push, onChildAdded } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+  import { getDatabase, ref, push, onChildAdded, onChildRemoved, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyBmhQMRVK5HwJ9t5xIteYXD-1rQgIK0q4I",
@@ -73,49 +81,50 @@
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
 
-  // یوزر سے معلومات لینا
   let userName = prompt("آپ کا نام؟") || "مہمان";
-  let roomCode = prompt("پرائیویٹ روم کوڈ درج کریں (مثلاً: 786)") || "public";
-  
+  let roomCode = prompt("روم کوڈ درج کریں") || "public";
   document.getElementById('room-info').innerText = "چیٹ روم: " + roomCode;
 
-  // مخصوص روم کا حوالہ
   const messagesRef = ref(db, 'rooms/' + roomCode);
 
-  // میسج بھیجنے کا فنکشن
   window.sendMsg = function() {
     const input = document.getElementById('msg-input');
     if (input.value.trim() !== "") {
-        push(messagesRef, {
-            sender: userName,
-            text: input.value,
-            time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
-        });
+        push(messagesRef, { sender: userName, text: input.value });
         input.value = "";
     }
   }
 
-  // میسج وصول کرنے کا فنکشن
+  // میسج ڈیلیٹ کرنے کا فنکشن
+  window.deleteMsg = function(msgId) {
+    if(confirm("کیا آپ یہ پیغام مٹانا چاہتے ہیں؟")) {
+        remove(ref(db, 'rooms/' + roomCode + '/' + msgId));
+    }
+  }
+
   onChildAdded(messagesRef, (data) => {
       const msg = data.val();
-      const msgArea = document.getElementById('messages');
+      const id = data.key;
       const isMine = msg.sender === userName;
+      const msgArea = document.getElementById('messages');
 
-      // آواز بجانا (صرف وصول ہونے والے میسج پر)
-      if(!isMine) {
-        new Audio('https://www.soundjay.com/buttons/sounds/button-3.mp3').play().catch(()=>{});
-      }
-
-      msgArea.innerHTML += `
-          <div class="msg ${isMine ? 'sent' : 'received'}">
+      const msgHTML = `
+          <div class="msg-wrapper ${isMine ? 'sent-wrapper' : 'received-wrapper'}" id="msg-${id}">
               <span class="sender-name">${msg.sender}</span>
-              ${msg.text}
+              <div class="msg ${isMine ? 'sent' : 'received'}">${msg.text}</div>
+              <span class="delete-btn" onclick="deleteMsg('${id}')"><i class="fas fa-trash"></i> مٹائیں</span>
           </div>
       `;
+      msgArea.insertAdjacentHTML('beforeend', msgHTML);
       msgArea.scrollTop = msgArea.scrollHeight;
+  });
+
+  // جب ڈیٹا بیس سے میسج ڈیلیٹ ہو تو سکرین سے بھی ہٹ جائے
+  onChildRemoved(messagesRef, (data) => {
+      const el = document.getElementById("msg-" + data.key);
+      if(el) el.remove();
   });
 </script>
 
 </body>
-        </html>
-            
+</html>
