@@ -3,64 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VibeTalk - Nasir Messenger</title>
+    <title>VibeTalk - Nasir Professional</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #e5ddd5; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
         
-        /* ہیڈر اور پورٹ فولیو */
-        .header-card { background: white; width: 100%; max-width: 500px; padding: 15px 0; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); border-bottom: 3px solid #075e54; }
-        .flag-img { width: 60px; }
-        .profile-img { width: 100px; height: 100px; border-radius: 50%; border: 3px solid #075e54; object-fit: cover; margin: 5px 0; }
-        h1 { margin: 5px 0; color: #075e54; font-size: 20px; }
-        .social-icons a { font-size: 22px; margin: 0 10px; color: #0081C9; text-decoration: none; }
+        /* پورٹ فولیو ہیڈر */
+        .header-card { background: white; width: 100%; max-width: 500px; padding: 15px 0; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); border-bottom: 3px solid #075e54; position: relative; }
+        .flag-img { width: 55px; }
+        .profile-img { width: 90px; height: 90px; border-radius: 50%; border: 3px solid #075e54; object-fit: cover; margin: 5px 0; }
+        h1 { margin: 5px 0; color: #075e54; font-size: 18px; }
 
-        /* چیٹ کنٹینر */
+        /* "سب صاف کریں" بٹن */
+        .clear-all-btn { position: absolute; top: 10px; right: 10px; background: #cc0000; color: white; border: none; padding: 6px 12px; border-radius: 5px; font-size: 10px; cursor: pointer; font-weight: bold; }
+
+        /* سوشل لنکس اسٹائل */
+        .social-icons { margin-top: 10px; }
+        .social-icons a { font-size: 25px; margin: 0 12px; text-decoration: none; transition: 0.3s; }
+        .fa-facebook { color: #1877F2; }
+        .fa-whatsapp { color: #25D366; }
+        .fa-twitter { color: #1DA1F2; }
+        .social-icons a:hover { opacity: 0.7; }
+
+        /* چیٹ ایریا */
         #chat-container { width: 100%; max-width: 500px; background: #e5ddd5; flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-        #room-info { background: #075e54; color: white; padding: 8px; text-align: center; font-size: 13px; font-weight: bold; }
-        #messages { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 12px; }
+        #room-info { background: #075e54; color: white; padding: 6px; text-align: center; font-size: 12px; }
+        #messages { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
         
-        /* میسج ببل اور ڈیلیٹ بٹن */
-        .msg-wrapper { display: flex; flex-direction: column; position: relative; max-width: 85%; }
+        /* میسج ببل */
+        .msg-wrapper { display: flex; flex-direction: column; max-width: 80%; position: relative; }
         .sent-wrapper { align-self: flex-end; }
         .received-wrapper { align-self: flex-start; }
 
-        .msg { padding: 8px 12px; border-radius: 12px; font-size: 15px; box-shadow: 0 1px 1px rgba(0,0,0,0.1); word-wrap: break-word; position: relative; }
+        .msg { padding: 8px 12px; border-radius: 12px; font-size: 15px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); position: relative; }
         .sent { background: #dcf8c6; border-bottom-right-radius: 0; }
         .received { background: white; border-bottom-left-radius: 0; }
         
-        .sender-name { font-size: 11px; font-weight: bold; color: #075e54; margin-bottom: 2px; }
-        
-        /* ڈیلیٹ آئیکن */
-        .delete-btn { font-size: 12px; color: #999; cursor: pointer; margin-top: 4px; align-self: flex-end; transition: 0.3s; }
-        .delete-btn:hover { color: #cc0000; }
+        .sender-name { font-size: 10px; font-weight: bold; color: #075e54; margin-bottom: 2px; }
+        .single-delete { font-size: 11px; color: #b3b3b3; cursor: pointer; margin-top: 3px; align-self: flex-end; }
 
-        /* ان پٹ ایریا */
-        .input-area { background: #f0f0f0; padding: 10px; display: flex; gap: 8px; align-items: center; }
+        /* ان پٹ */
+        .input-area { background: #f0f0f0; padding: 10px; display: flex; gap: 8px; }
         #msg-input { flex: 1; border: none; padding: 12px; border-radius: 25px; outline: none; }
-        #send-btn { background: #075e54; color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        #send-btn { background: #075e54; color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; }
     </style>
 </head>
 <body>
 
     <div class="header-card">
+        <button class="clear-all-btn" onclick="clearFullRoom()">سب صاف کریں</button>
         <img src="flag.gif" alt="Flag" class="flag-img">
         <br>
         <img src="my-photo.jpg" alt="Nasir" class="profile-img">
         <h1>ناصر ممتاز</h1>
+        
         <div class="social-icons">
-            <a href="#"><i class="fab fa-facebook"></i></a>
-            <a href="#"><i class="fab fa-whatsapp"></i></a>
-            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="https://www.facebook.com/YourPage" target="_blank"><i class="fab fa-facebook"></i></a>
+            <a href="https://wa.me/923000000000" target="_blank"><i class="fab fa-whatsapp"></i></a>
+            <a href="https://twitter.com/YourHandle" target="_blank"><i class="fab fa-twitter"></i></a>
         </div>
     </div>
 
     <div id="chat-container">
-        <div id="room-info">روم کوڈ لوڈ ہو رہا ہے...</div>
+        <div id="room-info">روم: <span id="current-room">...</span></div>
         <div id="messages"></div>
         <div class="input-area">
             <input type="text" id="msg-input" placeholder="پیغام لکھیں...">
-            <button id="send-btn" onclick="sendMsg()"><i class="fas fa-paper-plane"></i></button>
+            <button id="send-btn" onclick="sendMsg()">➤</button>
         </div>
     </div>
 
@@ -83,22 +92,25 @@
 
   let userName = prompt("آپ کا نام؟") || "مہمان";
   let roomCode = prompt("روم کوڈ درج کریں") || "public";
-  document.getElementById('room-info').innerText = "چیٹ روم: " + roomCode;
+  document.getElementById('current-room').innerText = roomCode;
 
   const messagesRef = ref(db, 'rooms/' + roomCode);
+
+  window.clearFullRoom = function() {
+    if(confirm("کیا آپ اس روم کے تمام پیغامات مٹانا چاہتے ہیں؟")) {
+        remove(messagesRef);
+    }
+  }
+
+  window.deleteThisMsg = function(msgId) {
+    remove(ref(db, 'rooms/' + roomCode + '/' + msgId));
+  }
 
   window.sendMsg = function() {
     const input = document.getElementById('msg-input');
     if (input.value.trim() !== "") {
         push(messagesRef, { sender: userName, text: input.value });
         input.value = "";
-    }
-  }
-
-  // میسج ڈیلیٹ کرنے کا فنکشن
-  window.deleteMsg = function(msgId) {
-    if(confirm("کیا آپ یہ پیغام مٹانا چاہتے ہیں؟")) {
-        remove(ref(db, 'rooms/' + roomCode + '/' + msgId));
     }
   }
 
@@ -112,14 +124,15 @@
           <div class="msg-wrapper ${isMine ? 'sent-wrapper' : 'received-wrapper'}" id="msg-${id}">
               <span class="sender-name">${msg.sender}</span>
               <div class="msg ${isMine ? 'sent' : 'received'}">${msg.text}</div>
-              <span class="delete-btn" onclick="deleteMsg('${id}')"><i class="fas fa-trash"></i> مٹائیں</span>
+              <span class="single-delete" onclick="deleteThisMsg('${id}')">
+                <i class="fas fa-trash-alt"></i> مٹائیں
+              </span>
           </div>
       `;
       msgArea.insertAdjacentHTML('beforeend', msgHTML);
       msgArea.scrollTop = msgArea.scrollHeight;
   });
 
-  // جب ڈیٹا بیس سے میسج ڈیلیٹ ہو تو سکرین سے بھی ہٹ جائے
   onChildRemoved(messagesRef, (data) => {
       const el = document.getElementById("msg-" + data.key);
       if(el) el.remove();
@@ -127,4 +140,5 @@
 </script>
 
 </body>
-</html>
+    </html>
+    
