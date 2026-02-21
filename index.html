@@ -1,144 +1,54 @@
 <!DOCTYPE html>
-<html lang="ur">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Nasir Pro Messenger</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <script src="https://meet.jit.si/external_api.js"></script>
-    <style>
-        :root { --primary: #075e54; --bg: #e5ddd5; }
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
-        
-        /* ہیڈر کارڈ */
-        .header { background: white; padding: 15px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); border-bottom: 4px solid var(--primary); position: relative; z-index: 10; }
-        .profile-img { width: 70px; height: 70px; border-radius: 50%; border: 3px solid var(--primary); object-fit: cover; }
-        .social-links { margin-top: 10px; display: flex; justify-content: center; gap: 15px; }
-        .social-links a { font-size: 20px; color: var(--primary); text-decoration: none; }
+<html lang="ur"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nasir Chat</title><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<style>
+body{font-family:sans-serif;margin:0;background:#e5ddd5;display:flex;flex-direction:column;height:100vh}
+.hdr{background:#075e54;color:#fff;padding:10px;text-align:center}
+.p-img{width:50px;height:50px;border-radius:50%;border:2px solid #fff}
+#msgs{flex:1;overflow-y:auto;padding:15px;display:flex;flex-direction:column;gap:10px}
+.msg{padding:8px;border-radius:10px;max-width:80%;font-size:14px;background:#fff}
+.s{background:#dcf8c6;align-self:flex-end}
+.in-bar{background:#f0f0f0;padding:8px;display:flex;align-items:center;gap:5px;border-top:1px solid #ccc}
+#m-in{flex:1;border:none;padding:10px;border-radius:20px;outline:none}
+.btn{background:#075e54;color:#fff;border:none;width:40px;height:40px;border-radius:50%;cursor:pointer}
+#log{text-align:center;padding-top:100px;background:#fff;position:fixed;width:100%;height:100%;z-index:99}
+</style></head><body>
 
-        /* کال بٹنز */
-        .call-btns { position: absolute; top: 15px; right: 15px; display: flex; gap: 8px; }
-        .btn-call { background: var(--primary); color: white; border: none; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+<div id="log">
+    <img src="my-photo.jpg" style="width:80px;border-radius:50%"><br>
+    <h2>ناصر میسنجر</h2>
+    <button onclick="stChat()" style="padding:12px 25px;background:#075e54;color:#fff;border-radius:25px;border:none;cursor:pointer">شروع کریں</button>
+</div>
 
-        /* چیٹ ایریا */
-        #chat-room { flex: 1; display: none; flex-direction: column; overflow: hidden; }
-        #messages { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
-        
-        /* میسج ببل */
-        .msg { padding: 10px; border-radius: 15px; max-width: 80%; font-size: 15px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
-        .sent { background: #dcf8c6; align-self: flex-end; border-bottom-right-radius: 2px; }
-        .received { background: white; align-self: flex-start; border-bottom-left-radius: 2px; }
-        .chat-img { max-width: 100%; border-radius: 10px; }
+<div class="hdr">
+    <img src="my-photo.jpg" class="p-img"><br>
+    <b>ناصر ممتاز</b>
+</div>
 
-        /* ٹائپنگ اور ان پٹ - جو اب لازمی نظر آئے گا */
-        .input-bar { background: #f0f0f0; padding: 12px; display: flex; gap: 8px; align-items: center; border-top: 1px solid #ddd; }
-        #msg-input { flex: 1; border: none; padding: 12px; border-radius: 25px; outline: none; font-size: 14px; }
-        .icon-btn { color: var(--primary); font-size: 20px; cursor: pointer; background: none; border: none; }
-        .send-btn { background: var(--primary); color: white; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+<div id="msgs"></div>
 
-        /* کال ونڈو */
-        #call-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: black; z-index: 1000; display: none; flex-direction: column; }
-    </style>
-</head>
-<body>
-
-    <div id="call-overlay">
-        <div style="background:red; color:white; padding:15px; text-align:center; cursor:pointer;" onclick="endCall()">کال بند کریں ✖</div>
-        <div id="jitsi-container" style="flex:1;"></div>
-    </div>
-
-    <div class="header">
-        <div class="call-btns">
-            <button class="btn-call" onclick="startCall('audio')"><i class="fas fa-phone"></i></button>
-            <button class="btn-call" onclick="startCall('video')"><i class="fas fa-video"></i></button>
-        </div>
-        <img src="my-photo.jpg" class="profile-img"><br>
-        <b style="font-size: 18px;">ناصر ممتاز</b>
-        <div class="social-links">
-            <a href="#"><i class="fab fa-facebook"></i></a>
-            <a href="#"><i class="fab fa-whatsapp"></i></a>
-            <a href="#"><i class="fab fa-twitter"></i></a>
-        </div>
-    </div>
-
-    <div id="start-screen" style="text-align:center; padding:50px;">
-        <button onclick="joinChat()" style="background:var(--primary); color:white; padding:15px 30px; border-radius:30px; border:none; font-size:18px;">چیٹ شروع کریں</button>
-    </div>
-
-    <div id="chat-room">
-        <div id="messages"></div>
-        <div class="input-bar">
-            <label for="file-in" class="icon-btn"><i class="fas fa-camera"></i></label>
-            <input type="file" id="file-in" accept="image/*" style="display:none" onchange="sendImg(this)">
-            <button id="mic" class="icon-btn" onclick="handleMic()"><i class="fas fa-microphone"></i></button>
-            <input type="text" id="msg-input" placeholder="میسج لکھیں...">
-            <button class="send-btn" onclick="sendText()"><i class="fas fa-paper-plane"></i></button>
-        </div>
-    </div>
+<div class="in-bar">
+    <label for="f" style="color:#075e54;font-size:22px;cursor:pointer"><i class="fas fa-camera"></i></label>
+    <input type="file" id="f" accept="image/*" style="display:none" onchange="sI(this)">
+    <input type="text" id="m-in" placeholder="پیغام لکھیں...">
+    <button class="btn" onclick="sT()"><i class="fas fa-paper-plane"></i></button>
+</div>
 
 <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getDatabase, ref, push, onChildAdded } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-
-    const config = {
-        apiKey: "AIzaSyBmhQMRVK5HwJ9t5xIteYXD-1rQgIK0q4I",
-        databaseURL: "https://my-messenger-220f7-default-rtdb.firebaseio.com/"
-    };
-
-    const app = initializeApp(config);
-    const db = getDatabase(app);
-    let user = "", room = "main", api = null, rec, chunks = [];
-
-    window.joinChat = () => {
-        user = prompt("آپ کا نام؟") || "مہمان";
-        document.getElementById('start-screen').style.display = "none";
-        document.getElementById('chat-room').style.display = "flex";
-        
-        onChildAdded(ref(db, 'msgs'), (snap) => {
-            const d = snap.val();
-            const isMe = d.sender === user;
-            let html = `<div class="msg ${isMe?'sent':'received'}">`;
-            if(d.type==='text') html += d.text;
-            else if(d.type==='img') html += `<img src="${d.img}" class="chat-img">`;
-            else if(d.type==='voice') html += `<audio src="${d.audio}" controls style="width:150px"></audio>`;
-            html += `<div style="font-size:10px; color:gray; text-align:right">${d.time}</div></div>`;
-            document.getElementById('messages').insertAdjacentHTML('beforeend', html);
-            document.getElementById('messages').scrollTop = document.getElementById('messages').scrollHeight;
-        });
-    };
-
-    window.sendText = () => {
-        const i = document.getElementById('msg-input');
-        if(i.value) { push(ref(db, 'msgs'), {sender:user, text:i.value, type:'text', time:new Date().toLocaleTimeString()}); i.value=""; }
-    };
-
-    window.sendImg = (el) => {
-        const r = new FileReader();
-        r.onload = (e) => push(ref(db, 'msgs'), {sender:user, img:e.target.result, type:'img', time:new Date().toLocaleTimeString()});
-        r.readAsDataURL(el.files[0]);
-    };
-
-    window.handleMic = async () => {
-        if(!rec || rec.state==='inactive'){
-            const s = await navigator.mediaDevices.getUserMedia({audio:true});
-            rec = new MediaRecorder(s); rec.start();
-            document.getElementById('mic').style.color = "red"; chunks = [];
-            rec.ondataavailable = e => chunks.push(e.data);
-            rec.onstop = () => {
-                const r = new FileReader();
-                r.readAsDataURL(new Blob(chunks));
-                r.onloadend = () => push(ref(db, 'msgs'), {sender:user, audio:r.result, type:'voice', time:new Date().toLocaleTimeString()});
-                document.getElementById('mic').style.color = "#075e54";
-            };
-        } else rec.stop();
-    };
-
-    window.startCall = (mode) => {
-        document.getElementById('call-overlay').style.display = "flex";
-        api = new JitsiMeetExternalAPI("meet.jit.si", { roomName: "nasir-"+room, parentNode: document.querySelector('#jitsi-container'), configOverwrite: { startWithVideoMuted: mode==='audio' } });
-    };
-
-    window.endCall = () => { api.dispose(); document.getElementById('call-overlay').style.display = "none"; };
-</script>
-</body>
-</html>
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import {getDatabase,ref,push,onChildAdded} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+const cfg={databaseURL:"https://my-messenger-220f7-default-rtdb.firebaseio.com/"};
+const app=initializeApp(cfg);const db=getDatabase(app);let u="";
+window.stChat=()=>{u=prompt("آپ کا نام؟")||"مہمان";document.getElementById('log').style.display="none"};
+const mRef=ref(db,'chat');
+onChildAdded(mRef,(s)=>{const d=s.val();const isM=d.u===u;
+let c=d.t==='x'?d.m:`<img src="${d.i}" style="max-width:100%;border-radius:8px">`;
+const h=`<div class="msg ${isM?'s':''}">${c}<div style="font-size:8px;color:gray;text-align:right">${d.h}</div></div>`;
+document.getElementById('msgs').insertAdjacentHTML('beforeend',h);
+document.getElementById('msgs').scrollTop=document.getElementById('msgs').scrollHeight});
+window.sT=()=>{const i=document.getElementById('m-in');if(i.value.trim()){
+push(mRef,{u:u,m:i.value,t:'x',h:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})});i.value=""}};
+window.sI=(el)=>{const r=new FileReader();r.onload=(e)=>push(mRef,{u:u,i:e.target.result,t:'i',h:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})});
+r.readAsDataURL(el.files[0])};
+</script></body></html>
+                   
