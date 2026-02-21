@@ -2,31 +2,56 @@
 <html lang="ur">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ناصر میسنجر - پرو</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ناصر پورٹ فولیو و میسنجر</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; background: #e5ddd5; display: flex; flex-direction: column; height: 100vh; }
-        #chat-header { background: #075e54; color: white; padding: 15px; text-align: center; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-        #messages { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
-        .input-area { background: #f0f0f0; padding: 10px; display: flex; gap: 10px; align-items: center; }
-        input { flex: 1; border: none; padding: 12px; border-radius: 25px; outline: none; font-size: 16px; }
-        button { background: #075e54; color: white; border: none; padding: 10px 20px; border-radius: 50%; cursor: pointer; font-size: 18px; }
-        .msg { max-width: 85%; padding: 8px 12px; border-radius: 10px; position: relative; font-size: 15px; box-shadow: 0 1px 1px rgba(0,0,0,0.1); }
-        .sent { align-self: flex-end; background: #dcf8c6; border-bottom-right-radius: 0; }
-        .received { align-self: flex-start; background: white; border-bottom-left-radius: 0; }
-        .sender-name { font-size: 11px; font-weight: bold; color: #075e54; display: block; margin-bottom: 2px; }
-        .time { font-size: 10px; color: #666; float: right; margin-top: 5px; margin-left: 10px; }
+        /* پورٹ فولیو اسٹائل */
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; background: #f4f4f4; text-align: center; }
+        .portfolio-header { background: white; padding: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .profile-img { width: 150px; height: 150px; border-radius: 50%; border: 5px solid #075e54; object-fit: cover; }
+        .flag { width: 100px; margin: 10px auto; display: block; }
+        .social-links { margin: 20px 0; }
+        .social-icon { font-size: 30px; margin: 0 15px; color: #0081C9; text-decoration: none; transition: 0.3s; }
+        .social-icon:hover { color: #075e54; }
+
+        /* میسنجر اسٹائل */
+        #chat-container { max-width: 500px; margin: 20px auto; background: #e5ddd5; height: 500px; display: flex; flex-direction: column; border-radius: 15px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        #chat-header { background: #075e54; color: white; padding: 15px; font-weight: bold; }
+        #messages { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; text-align: left; }
+        .input-area { background: #f0f0f0; padding: 10px; display: flex; gap: 10px; }
+        input { flex: 1; border: none; padding: 10px; border-radius: 20px; outline: none; }
+        button { background: #075e54; color: white; border: none; padding: 10px 15px; border-radius: 50%; cursor: pointer; }
+
+        /* میسج ببل */
+        .msg { max-width: 80%; padding: 8px 12px; border-radius: 10px; font-size: 14px; position: relative; }
+        .sent { align-self: flex-end; background: #dcf8c6; }
+        .received { align-self: flex-start; background: white; }
+        .sender-name { font-size: 10px; font-weight: bold; color: #075e54; display: block; }
+        .time { font-size: 9px; color: #666; float: right; margin-top: 5px; }
     </style>
 </head>
 <body>
 
-<div id="chat-header">ناصر چیٹ روم</div>
-<div id="messages"></div>
+    <div class="portfolio-header">
+        <img src="pakistan-flag.gif" alt="Flag" class="flag"> <img src="your-photo.jpg" alt="Nasir" class="profile-img"> <h1>ناصر ممتاز</h1>
+        <p>خوش آمدید! یہ میرا پورٹ فولیو اور میسنجر ہے</p>
+        
+        <div class="social-links">
+            <a href="#" class="social-icon"><i class="fab fa-facebook"></i></a>
+            <a href="#" class="social-icon"><i class="fab fa-whatsapp"></i></a>
+            <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+        </div>
+    </div>
 
-<div class="input-area">
-    <input type="text" id="user-msg" placeholder="پیغام لکھیں...">
-    <button onclick="sendMsg()">➤</button>
-</div>
+    <div id="chat-container">
+        <div id="chat-header">ناصر لائیو چیٹ روم</div>
+        <div id="messages"></div>
+        <div class="input-area">
+            <input type="text" id="user-msg" placeholder="پیغام لکھیں...">
+            <button onclick="sendMsg()">➤</button>
+        </div>
+    </div>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -48,10 +73,7 @@
   const auth = getAuth(app);
 
   let userName = prompt("آپ کا نام؟") || "مہمان";
-  
-  signInAnonymously(auth).then(() => {
-      console.log("لاگ ان کامیاب!");
-  });
+  signInAnonymously(auth);
 
   const messagesRef = ref(db, 'messages');
 
@@ -59,13 +81,10 @@
     let input = document.getElementById('user-msg');
     if (input.value.trim() !== "") {
         let now = new Date();
-        let time = now.getHours() + ":" + (now.getMinutes() < 10 ? '0' : '') + now.getMinutes();
-
         push(messagesRef, {
             sender: userName,
             text: input.value,
-            time: time,
-            uid: auth.currentUser ? auth.currentUser.uid : "anon"
+            time: now.getHours() + ":" + (now.getMinutes() < 10 ? '0' : '') + now.getMinutes()
         });
         input.value = "";
     }
@@ -74,16 +93,10 @@
   onChildAdded(messagesRef, (data) => {
       const msg = data.val();
       let msgArea = document.getElementById('messages');
-      
-      // میسج آنے پر آواز
-      let notify = new Audio('https://www.soundjay.com/buttons/sounds/button-3.mp3');
-      notify.play().catch(e => console.log("آواز کے لیے پہلے اسکرین پر کہیں کلک کریں"));
-
       let isMine = msg.sender === userName;
-      let msgClass = isMine ? "sent" : "received";
-
+      
       msgArea.innerHTML += `
-          <div class="msg ${msgClass}">
+          <div class="msg ${isMine ? 'sent' : 'received'}">
               <span class="sender-name">${msg.sender}</span>
               ${msg.text}
               <span class="time">${msg.time}</span>
@@ -95,4 +108,4 @@
 
 </body>
     </html>
-    
+        
